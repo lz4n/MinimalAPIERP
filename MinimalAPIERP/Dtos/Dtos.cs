@@ -8,31 +8,14 @@ namespace MinimalAPIERP.Dtos
     {
         public DateTime OrderDate { get; set; }
         public string Username { get; set; } = null!;
-
-        [StringLength(160)]
         public string Name { get; set; } = null!;
-
-        [StringLength(70)]
         public string Address { get; set; } = null!;
-
-        [StringLength(40)]
         public string City { get; set; } = null!;
-
-        [StringLength(40)]
         public string State { get; set; } = null!;
-
-        [StringLength(10)]
         public string PostalCode { get; set; } = null!;
-
-        [StringLength(40)]
         public string Country { get; set; } = null!;
-
-        [StringLength(24)]
         public string Phone { get; set; } = null!;
-
         public string Email { get; set; } = null!;
-
-        [Column(TypeName = "decimal(18, 2)")]
         public decimal Total { get; set; }
     }
 
@@ -41,32 +24,31 @@ namespace MinimalAPIERP.Dtos
         public Guid? Guid { get; set; }
         public DateTime OrderDate { get; set; }
         public string Username { get; set; } = null!;
-
-        [StringLength(160)]
         public string Name { get; set; } = null!;
-
-        [StringLength(70)]
         public string Address { get; set; } = null!;
-
-        [StringLength(40)]
         public string City { get; set; } = null!;
-
-        [StringLength(40)]
         public string State { get; set; } = null!;
-
-        [StringLength(10)]
         public string PostalCode { get; set; } = null!;
-
-        [StringLength(40)]
         public string Country { get; set; } = null!;
-
-        [StringLength(24)]
         public string Phone { get; set; } = null!;
-
         public string Email { get; set; } = null!;
-
-        [Column(TypeName = "decimal(18, 2)")]
         public decimal Total { get; set; }
+    }
+
+    public class CategoryDto
+    {
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+
+
+    public class CategoryViewDto
+    {
+        public Guid? Guid { get; set; }
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
     public class RaincheckDto
@@ -109,11 +91,5 @@ namespace MinimalAPIERP.Dtos
     {
         public string? Name { get; set; }
         public CategoryDto? Category { get; set; }
-    }
-
-
-    public class CategoryDto
-    {
-        public string? Name { get; set; }
     }
 }
