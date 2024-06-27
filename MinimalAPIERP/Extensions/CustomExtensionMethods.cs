@@ -99,7 +99,6 @@ namespace ERP.Extensions
 
         public static void DatabaseInit(this WebApplication app)
         {
-            // TODO: Buscar mejor solución
             using (var scope = app.Services.CreateScope())
             {
                 bool dbCreated = false;
@@ -121,7 +120,6 @@ namespace ERP.Extensions
 
         public static void ConfigureSwagger(this WebApplication app)
         {
-            // TODO: Buscar mejor solución
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

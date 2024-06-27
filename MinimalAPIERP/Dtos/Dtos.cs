@@ -83,13 +83,69 @@ namespace MinimalAPIERP.Dtos
 
     public class ProductDto
     {
-        public string? Name { get; set; }
-        public CategoryDto? Category { get; set; }
+        public string SkuNumber { get; set; }
+        public int RecommendationId { get; set; }
+        public string Title { get; set; }
+        public decimal Price { get; set; }
+        public decimal SalePrice { get; set; }
+        public string? ProductArtUrl { get; set; }
+        public string Description { get; set; }
+        public DateTime Created { get; set; }
+        public string ProductDetails { get; set; }
+        public int Inventory { get; set; }
+        public int LeadTime { get; set; }
+        public Guid CategoryGuid { get; set; }
+
     }
 
     public class ProductViewDto
     {
-        public string? Name { get; set; }
-        public CategoryDto? Category { get; set; }
+        public Guid? Guid { get; set; }
+        public string SkuNumber { get; set; }
+        public int RecommendationId { get; set; }
+        public string Title { get; set; }
+        public decimal Price { get; set; }
+        public decimal SalePrice { get; set; }
+        public string? ProductArtUrl { get; set; }
+        public string Description { get; set; }
+        public DateTime Created { get; set; }
+        public string ProductDetails { get; set; }
+        public int Inventory { get; set; }
+        public int LeadTime { get; set; }
+        public CategoryViewDto? Category { get; set; }
+    }
+
+    public class CartItemDto
+    {
+        public string CartId { get; set; }
+        public int Count { get; set; }
+        public DateTime DateCreated { get; set; }
+        public Guid ProductGuid { get; set; }
+    }
+
+    public class CartItemViewDto
+    {
+        public Guid? Guid { get; set; }
+        public string CartId { get; set; }
+        public int Count { get; set; }
+        public DateTime DateCreated { get; set; }
+        public ProductViewDto? Product { get; set; }
+    }
+
+    public class OrderDetailDto
+    {
+        public int Count { get; set; }
+        public decimal UnitPrice { get; set; }
+        public Guid OrderGuid { get; set; }
+        public Guid ProductGuid { get; set; }
+    }
+
+    public class OrderDetailViewDto
+    {
+        public Guid? Guid { get; set; }
+        public int Count { get; set; }
+        public decimal UnitPrice { get; set; }
+        public OrderViewDto? Order { get; set; }
+        public ProductViewDto? Product { get; set; }
     }
 }

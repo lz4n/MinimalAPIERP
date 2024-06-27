@@ -18,139 +18,89 @@ internal static class ProductApi
         var group = routes.MapGroup("/erp")
             .WithTags("Product Api");
 
-        MapOrderEndpoints(group);
-        MapCategoryEndpoints(group);
+        group.MapGet("/product/{Guid}", async Task<Results<Ok<ProductViewDto>, NotFound>> (Guid guid, AppDbContext db, IMapper mapper) =>
+        {
+            Product? product = await db.Products
+                .Include(x => x.Category)
+                .FirstOrDefaultAsync(x => x.Guid == guid);
+            return product != null ? TypedResults.Ok(mapper.Map<ProductViewDto>(product)) : TypedResults.NotFound();
+        })
+       .WithOpenApi();
+
+        group.MapGet("/product/all", async Task<Results<Ok<IList<ProductViewDto>>, NotFound>> (AppDbContext db, IMapper mapper) =>
+        {
+            ICollection<Product> products = await db.Products
+                .Include(x => x.Category)
+                .ToListAsync();
+            return products.Any() ? TypedResults.Ok(mapper.Map<IList<ProductViewDto>>(products)) : TypedResults.NotFound();
+        })
+        .WithOpenApi();
+
+        group.MapGet("/product/paged", async Task<Results<Ok<IList<ProductViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, int pageSize = 10, int page = 0) =>
+        {
+            ICollection<Product> products = await db.Products
+                .OrderBy(x => x.Guid)
+                .Include(x => x.Category)
+                .Skip(page * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            return products.Any() ? TypedResults.Ok(mapper.Map<IList<ProductViewDto>>(products)) : TypedResults.NotFound();
+        })
+        .WithOpenApi();
+
+        group.MapPost("/product", async Task<Results<Created<ProductViewDto>, BadRequest, NotFound>> (ProductDto productDto, AppDbContext db, IMapper mapper) =>
+        {
+            Category? category = await db.Categories.FirstOrDefaultAsync(x => x.Guid == productDto.CategoryGuid);
+            if (category is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            Product? product = mapper.Map<Product>(productDto);
+            product.Category = category;
+
+            db.Products.Add(product);
+            await db.SaveChangesAsync();
+            return TypedResults.Created($"/erp/product/{product.Guid}", mapper.Map<ProductViewDto>(product));
+        })
+        .WithOpenApi();
+
+        group.MapPut("/product/{Guid}", async Task<Results<Ok<ProductViewDto>, NotFound, BadRequest>> (Guid guid, ProductDto productDto, AppDbContext db, IMapper mapper) =>
+        {
+            Category? category = await db.Categories.FirstOrDefaultAsync(x => x.Guid == productDto.CategoryGuid);
+            if (category is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            Product? product = await db.Products.FirstOrDefaultAsync(x => x.Guid == guid);
+            if (product == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            mapper.Map(productDto, product);
+            product.Category = category;
+
+            await db.SaveChangesAsync();
+            return TypedResults.Ok(mapper.Map<ProductViewDto>(product));
+        })
+        .WithOpenApi();
+
+        group.MapDelete("/product/{Guid}", async Task<Results<NoContent, NotFound>> (Guid guid, AppDbContext db) =>
+        {
+            Product? product = await db.Products.FirstOrDefaultAsync(x => x.Guid == guid);
+            if (product == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            db.Products.Remove(product);
+            await db.SaveChangesAsync();
+            return TypedResults.NoContent();
+        })
+        .WithOpenApi();
 
         return group;
     }
-    private static void MapOrderEndpoints(RouteGroupBuilder group)
-    {
-        group.MapGet("/order/{Guid}", async Task<Results<Ok<OrderViewDto>, NotFound>> (Guid guid, AppDbContext db, IMapper mapper) =>
-        {
-            Order? order = await db.Orders.FirstOrDefaultAsync(x => x.Guid == guid);
-            return order != null ? TypedResults.Ok(mapper.Map<OrderViewDto>(order)) : TypedResults.NotFound();
-        })
-        .WithOpenApi();
-
-        group.MapGet("/order/all", async Task<Results<Ok<IList<OrderViewDto>>, NotFound>> (AppDbContext db, IMapper mapper) =>
-        {
-            ICollection<Order> orders = await db.Orders.ToListAsync();
-            return orders.Any() ? TypedResults.Ok(mapper.Map<IList<OrderViewDto>>(orders)) : TypedResults.NotFound();
-        })
-        .WithOpenApi();
-
-        group.MapGet("/order/paged", async Task<Results<Ok<IList<OrderViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, int pageSize = 10, int page = 0) =>
-        {
-            ICollection<Order> orders = await db.Orders
-                .OrderBy(x => x.Guid)
-                .Skip(page * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            return orders.Any() ? TypedResults.Ok(mapper.Map<IList<OrderViewDto>>(orders)) : TypedResults.NotFound();
-        })
-        .WithOpenApi();
-
-        group.MapPost("/order", async Task<Results<Created<OrderViewDto>, BadRequest>> (OrderDto orderDto, AppDbContext db, IMapper mapper) =>
-        {
-            Order? order = mapper.Map<Order>(orderDto);
-            db.Orders.Add(order);
-            await db.SaveChangesAsync();
-            return TypedResults.Created($"/erp/order/{order.Guid}", mapper.Map<OrderViewDto>(order));
-        })
-        .WithOpenApi();
-
-        group.MapPut("/order/{Guid}", async Task<Results<Ok<OrderViewDto>, NotFound, BadRequest>> (Guid guid, OrderDto orderDto, AppDbContext db, IMapper mapper) =>
-        {
-            Order? order = await db.Orders.FirstOrDefaultAsync(x => x.Guid == guid);
-            if (order == null)
-            {
-                return TypedResults.NotFound();
-            }
-
-            mapper.Map(orderDto, order);
-            await db.SaveChangesAsync();
-            return TypedResults.Ok(mapper.Map<OrderViewDto>(order));
-        })
-        .WithOpenApi();
-
-        group.MapDelete("/order/{Guid}", async Task<Results<NoContent, NotFound>> (Guid guid, AppDbContext db) =>
-        {
-            Order? order = await db.Orders.FirstOrDefaultAsync(x => x.Guid == guid);
-            if (order == null)
-            {
-                return TypedResults.NotFound();
-            }
-
-            db.Orders.Remove(order);
-            await db.SaveChangesAsync();
-            return TypedResults.NoContent();
-        })
-        .WithOpenApi();
-    }
-
-    private static void MapCategoryEndpoints(RouteGroupBuilder group)
-    {
-        group.MapGet("/category/{Guid}", async Task<Results<Ok<CategoryViewDto>, NotFound>> (Guid guid, AppDbContext db, IMapper mapper) =>
-        {
-            Category? category = await db.Categories.FirstOrDefaultAsync(x => x.Guid == guid);
-            return category != null ? TypedResults.Ok(mapper.Map<CategoryViewDto>(category)) : TypedResults.NotFound();
-        })
-        .WithOpenApi();
-
-        group.MapGet("/category/all", async Task<Results<Ok<IList<CategoryViewDto>>, NotFound>> (AppDbContext db, IMapper mapper) =>
-        {
-            ICollection<Category> categorys = await db.Categories.ToListAsync();
-            return categorys.Any() ? TypedResults.Ok(mapper.Map<IList<CategoryViewDto>>(categorys)) : TypedResults.NotFound();
-        })
-        .WithOpenApi();
-
-        group.MapGet("/category/paged", async Task<Results<Ok<IList<CategoryViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, int pageSize = 10, int page = 0) =>
-        {
-            ICollection<Category> categorys = await db.Categories
-                .OrderBy(x => x.Guid)
-                .Skip(page * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            return categorys.Any() ? TypedResults.Ok(mapper.Map<IList<CategoryViewDto>>(categorys)) : TypedResults.NotFound();
-        })
-        .WithOpenApi();
-
-        group.MapPost("/category", async Task<Results<Created<CategoryViewDto>, BadRequest>> (CategoryDto categoryDto, AppDbContext db, IMapper mapper) =>
-        {
-            Category? category = mapper.Map<Category>(categoryDto);
-            db.Categories.Add(category);
-            await db.SaveChangesAsync();
-            return TypedResults.Created($"/erp/category/{category.Guid}", mapper.Map<CategoryViewDto>(category));
-        })
-        .WithOpenApi();
-
-        group.MapPut("/category/{Guid}", async Task<Results<Ok<CategoryViewDto>, NotFound, BadRequest>> (Guid guid, CategoryDto categoryDto, AppDbContext db, IMapper mapper) =>
-        {
-            Category? category = await db.Categories.FirstOrDefaultAsync(x => x.Guid == guid);
-            if (category == null)
-            {
-                return TypedResults.NotFound();
-            }
-
-            mapper.Map(categoryDto, category);
-            await db.SaveChangesAsync();
-            return TypedResults.Ok(mapper.Map<CategoryViewDto>(category));
-        })
-        .WithOpenApi();
-
-        group.MapDelete("/category/{Guid}", async Task<Results<NoContent, NotFound>> (Guid guid, AppDbContext db) =>
-        {
-            Category? category = await db.Categories.FirstOrDefaultAsync(x => x.Guid == guid);
-            if (category == null)
-            {
-                return TypedResults.NotFound();
-            }
-
-            db.Categories.Remove(category);
-            await db.SaveChangesAsync();
-            return TypedResults.NoContent();
-        })
-        .WithOpenApi();
-    }
-
 }

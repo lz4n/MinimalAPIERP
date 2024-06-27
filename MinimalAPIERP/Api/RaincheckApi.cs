@@ -12,7 +12,6 @@ namespace ERP.Api;
 
 internal static class RaincheckApi
 {
-    //TODO: añadir productos
     public static RouteGroupBuilder MapRaincheckApi(this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/erp")
@@ -22,6 +21,8 @@ internal static class RaincheckApi
         {
             Raincheck? raincheck = await db.Rainchecks
                 .Include(x => x.Store)
+                .Include(x => x.Product)
+                .ThenInclude(X => X.Category)
                 .FirstOrDefaultAsync(x => x.Guid == guid);
             return raincheck != null ? TypedResults.Ok(mapper.Map<RaincheckViewDto>(raincheck)) : TypedResults.NotFound();
         })
@@ -31,6 +32,8 @@ internal static class RaincheckApi
         {
             ICollection<Raincheck> rainchecks = await db.Rainchecks
                 .Include(x => x.Store)
+                .Include(x => x.Product)
+                .ThenInclude(X => X.Category)
                 .ToListAsync();
             return rainchecks.Any() ? TypedResults.Ok(mapper.Map<IList<RaincheckViewDto>>(rainchecks)) : TypedResults.NotFound();
         })
@@ -40,6 +43,8 @@ internal static class RaincheckApi
         {
             ICollection<Raincheck> rainchecks = await db.Rainchecks
                 .Include(x => x.Store)
+                .Include(x => x.Product)
+                .ThenInclude(X => X.Category)
                 .OrderBy(x => x.Guid)
                 .Skip(page * pageSize)
                 .Take(pageSize)
@@ -50,12 +55,22 @@ internal static class RaincheckApi
 
         group.MapPost("/raincheck", async Task<Results<Created<RaincheckViewDto>, BadRequest, NotFound>> (RaincheckDto raincheckDto, AppDbContext db, IMapper mapper) =>
         {
-            if (!db.Stores.Any(x => x.Guid == raincheckDto.StoreGuid))
+            Product? product = await db.Products.FirstOrDefaultAsync(x => x.Guid == raincheckDto.ProductGuid);
+            if (product is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            Store? store = await db.Stores.FirstOrDefaultAsync(x => x.Guid == raincheckDto.StoreGuid);
+            if (store is null)
             {
                 return TypedResults.NotFound();
             }
 
             Raincheck? raincheck = mapper.Map<Raincheck>(raincheckDto);
+            raincheck.Product = product;
+            raincheck.Store = store;
+
             db.Rainchecks.Add(raincheck);
             await db.SaveChangesAsync();
             return TypedResults.Created($"/erp/raincheck/{raincheck.Guid}", mapper.Map<RaincheckViewDto>(raincheck));
@@ -64,7 +79,14 @@ internal static class RaincheckApi
 
         group.MapPut("/raincheck/{Guid}", async Task<Results<Ok<RaincheckViewDto>, NotFound, BadRequest>> (Guid guid, RaincheckDto raincheckDto, AppDbContext db, IMapper mapper) =>
         {
-            if (!db.Stores.Any(x => x.Guid == raincheckDto.StoreGuid))
+            Product? product = await db.Products.FirstOrDefaultAsync(x => x.Guid == raincheckDto.ProductGuid);
+            if (product is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            Store? store = await db.Stores.FirstOrDefaultAsync(x => x.Guid == raincheckDto.StoreGuid);
+            if (store is null)
             {
                 return TypedResults.NotFound();
             }
@@ -76,6 +98,9 @@ internal static class RaincheckApi
             }
 
             mapper.Map(raincheckDto, raincheck);
+            raincheck.Product = product;
+            raincheck.Store = store;
+
             await db.SaveChangesAsync();
             return TypedResults.Ok(mapper.Map<RaincheckViewDto>(raincheck));
         })

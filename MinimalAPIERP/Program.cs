@@ -25,8 +25,12 @@ app.DatabaseInit();
 
 app.ConfigureSwagger();
 
+app.MapCategoryApi();
+app.MapOrderApi();
 app.MapStoreApi();
 app.MapProductApi();
+app.MapCartItemApi();
+app.MapOrderDetailApi();
 app.MapRaincheckApi();
 
 app.Run();
