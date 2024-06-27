@@ -11,13 +11,12 @@ namespace MinimalAPIERP.Infraestructure.Automapper
             CreateMap<Category, CategoryDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<StoreDto, Store>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
-
             CreateMap<Product, ProductDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category));
 
+            CreateMap<StoreDto, Store>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
             CreateMap<Store, StoreViewDto>()
                 .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid))

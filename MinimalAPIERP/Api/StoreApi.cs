@@ -23,23 +23,23 @@ internal static class StoreApi
         })
         .WithOpenApi();
 
-        group.MapGet("/store/{Guid}", async Task<Results<Ok<StoreViewDto>, NotFound>> (Guid Guid, AppDbContext db, IMapper mapper) =>
+        group.MapGet("/store/{Guid}", async Task<Results<Ok<StoreViewDto>, NotFound>> (Guid guid, AppDbContext db, IMapper mapper) =>
         {
-            var store = await db.Stores.FirstOrDefaultAsync(m => m.Guid == Guid);
+            Store? store = await db.Stores.FirstOrDefaultAsync(x => x.Guid == guid);
             return store != null ? TypedResults.Ok(mapper.Map<StoreViewDto>(store)) : TypedResults.NotFound();
         })
         .WithOpenApi();
 
         group.MapGet("/store/all", async Task<Results<Ok<IList<StoreViewDto>>, NotFound>> (AppDbContext db, IMapper mapper) =>
         {
-            var stores = await db.Stores.ToListAsync();
+            ICollection<Store> stores = await db.Stores.ToListAsync();
             return stores.Any() ? TypedResults.Ok(mapper.Map<IList<StoreViewDto>>(stores)) : TypedResults.NotFound();
         })
         .WithOpenApi();
 
         group.MapGet("/store/paged", async Task<Results<Ok<IList<StoreViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, int pageSize = 10, int page = 0) =>
         {
-            var stores = await db.Stores
+            ICollection<Store> stores = await db.Stores
                 .OrderBy(x => x.Guid)
                 .Skip(page * pageSize)
                 .Take(pageSize)
@@ -50,16 +50,16 @@ internal static class StoreApi
 
         group.MapPost("/store", async Task<Results<Created<StoreViewDto>, BadRequest>> (StoreDto storeDto, AppDbContext db, IMapper mapper) =>
         {
-            var store = mapper.Map<Store>(storeDto);
+            Store? store = mapper.Map<Store>(storeDto);
             db.Stores.Add(store);
             await db.SaveChangesAsync();
             return TypedResults.Created($"/erp/store/{store.Guid}", mapper.Map<StoreViewDto>(store));
         })
         .WithOpenApi();
 
-        group.MapPut("/store/{Guid}", async Task<Results<Ok<StoreViewDto>, NotFound, BadRequest>> (Guid Guid, StoreDto storeDto, AppDbContext db, IMapper mapper) =>
+        group.MapPut("/store/{Guid}", async Task<Results<Ok<StoreViewDto>, NotFound, BadRequest>> (Guid guid, StoreDto storeDto, AppDbContext db, IMapper mapper) =>
         {
-            var store = await db.Stores.FirstOrDefaultAsync(m => m.Guid == Guid);
+            Store? store = await db.Stores.FirstOrDefaultAsync(x => x.Guid == guid);
             if (store == null)
             {
                 return TypedResults.NotFound();
@@ -71,9 +71,9 @@ internal static class StoreApi
         })
         .WithOpenApi();
 
-        group.MapDelete("/store/{Guid}", async Task<Results<NoContent, NotFound>> (Guid Guid, AppDbContext db) =>
+        group.MapDelete("/store/{Guid}", async Task<Results<NoContent, NotFound>> (Guid guid, AppDbContext db) =>
         {
-            var store = await db.Stores.FirstOrDefaultAsync(m => m.Guid == Guid);
+            Store? store = await db.Stores.FirstOrDefaultAsync(x => x.Guid == guid);
             if (store == null)
             {
                 return TypedResults.NotFound();
