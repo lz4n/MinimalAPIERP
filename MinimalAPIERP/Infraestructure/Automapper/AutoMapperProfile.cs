@@ -75,17 +75,17 @@ namespace MinimalAPIERP.Infraestructure.Automapper
         private void MapProducts()
         {
             CreateMap<ProductDto, Product>()
-                            .ForMember(dest => dest.SkuNumber, opt => opt.MapFrom(src => src.SkuNumber))
-                            .ForMember(dest => dest.RecommendationId, opt => opt.MapFrom(src => src.RecommendationId))
-                            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
-                            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-                            .ForMember(dest => dest.SalePrice, opt => opt.MapFrom(src => src.SalePrice))
-                            .ForMember(dest => dest.ProductArtUrl, opt => opt.MapFrom(src => src.ProductArtUrl))
-                            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                            .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Created))
-                            .ForMember(dest => dest.ProductDetails, opt => opt.MapFrom(src => src.ProductDetails))
-                            .ForMember(dest => dest.Inventory, opt => opt.MapFrom(src => src.Inventory))
-                            .ForMember(dest => dest.LeadTime, opt => opt.MapFrom(src => src.LeadTime));
+                .ForMember(dest => dest.SkuNumber, opt => opt.MapFrom(src => src.SkuNumber))
+                .ForMember(dest => dest.RecommendationId, opt => opt.MapFrom(src => src.RecommendationId))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.SalePrice, opt => opt.MapFrom(src => src.SalePrice))
+                .ForMember(dest => dest.ProductArtUrl, opt => opt.MapFrom(src => src.ProductArtUrl))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Created))
+                .ForMember(dest => dest.ProductDetails, opt => opt.MapFrom(src => src.ProductDetails))
+                .ForMember(dest => dest.Inventory, opt => opt.MapFrom(src => src.Inventory))
+                .ForMember(dest => dest.LeadTime, opt => opt.MapFrom(src => src.LeadTime));
 
             CreateMap<Product, ProductViewDto>()
                 .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid))
