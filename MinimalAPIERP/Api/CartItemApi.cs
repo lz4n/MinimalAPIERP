@@ -38,6 +38,13 @@ internal static class CartItemApi
         })
         .WithOpenApi();
 
+        group.MapGet("/cartitem/totalPages", async Task<Ok<int>> (AppDbContext db, IMapper mapper, int pageSize = 10) =>
+        {
+            int totalPages = (int)Math.Ceiling(await db.CartItems.CountAsync() / (float)pageSize) - 1;
+            return TypedResults.Ok(totalPages);
+        })
+        .WithOpenApi();
+
         group.MapGet("/cartitem/paged", async Task<Results<Ok<IList<CartItemViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, int pageSize = 10, int page = 0) =>
         {
             ICollection<CartItem> cartitems = await db.CartItems

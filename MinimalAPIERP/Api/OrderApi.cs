@@ -32,6 +32,13 @@ internal static class OrderApi
         })
         .WithOpenApi();
 
+        group.MapGet("/order/totalPages", async Task<Ok<int>> (AppDbContext db, IMapper mapper, int pageSize = 10) =>
+        {
+            int totalPages = (int)Math.Ceiling(await db.Orders.CountAsync() / (float)pageSize) - 1;
+            return TypedResults.Ok(totalPages);
+        })
+        .WithOpenApi();
+
         group.MapGet("/order/paged", async Task<Results<Ok<IList<OrderViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, int pageSize = 10, int page = 0) =>
         {
             ICollection<Order> orders = await db.Orders

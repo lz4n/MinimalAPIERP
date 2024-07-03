@@ -32,6 +32,14 @@ internal static class CategoryApi
         })
         .WithOpenApi();
 
+
+        group.MapGet("/category/totalPages", async Task<Ok<int>> (AppDbContext db, IMapper mapper, int pageSize = 10) =>
+        {
+            int totalPages = (int)Math.Ceiling(await db.Categories.CountAsync() / (float)pageSize) - 1;
+            return TypedResults.Ok(totalPages);
+        })
+        .WithOpenApi();
+
         group.MapGet("/category/paged", async Task<Results<Ok<IList<CategoryViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, int pageSize = 10, int page = 0) =>
         {
             ICollection<Category> categorys = await db.Categories

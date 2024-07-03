@@ -36,6 +36,13 @@ internal static class ProductApi
         })
         .WithOpenApi();
 
+        group.MapGet("/product/totalPages", async Task<Ok<int>> (AppDbContext db, IMapper mapper, int pageSize = 10) =>
+        {
+            int totalPages = (int) Math.Ceiling(await db.Products.CountAsync() / (float) pageSize) -1;
+            return TypedResults.Ok(totalPages);
+        })
+        .WithOpenApi();
+
         group.MapGet("/product/paged", async Task<Results<Ok<IList<ProductViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, int pageSize = 10, int page = 0) =>
         {
             ICollection<Product> products = await db.Products

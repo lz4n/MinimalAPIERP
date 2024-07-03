@@ -1,0 +1,30 @@
+﻿@page "/"
+
+@rendermode InteractiveServer
+
+@using BlazorApp.Dtos
+
+<PageTitle>Productos</PageTitle>
+
+<h1>Productos</h1>
+
+@if (_products == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <div class="product-grid">
+        @foreach (var productViewDto in _products)
+        {
+            <div class="product-item">
+                <BlazorApp.Components.Shared.ProductView Product="productViewDto"></BlazorApp.Components.Shared.ProductView>
+            </div>
+        }
+    </div>
+    <div class="pagination">
+        <button @onclick="PreviousPage" disabled="@(_page == 0)">&lt;</button>
+        <span>@_page/@_totalPages</span>
+        <button @onclick="NextPage" disabled="@(_page == _totalPages)">&gt;</button>
+    </div>
+}
