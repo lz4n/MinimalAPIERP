@@ -6,13 +6,13 @@ namespace BlazorApp.Components.Pages
 {
     public partial class Product
     {
-        [Inject] private ICartItemApiService _cartItemApiService { get; set; }
-        [Inject] private IProductsApiService _productsApiService { get; set; }
+        [Inject] private ICartItemApiService cartItemApiService { get; set; }
+        [Inject] private IProductsApiService productsApiService { get; set; }
 
         [Parameter]
         public string? ProductGuid { get; set; }
 
-        private ProductDto _product = null;
+        private ProductDto product = null;
         private string loadingText = "Cargando...";
 
         protected override async Task OnInitializedAsync()
@@ -30,7 +30,7 @@ namespace BlazorApp.Components.Pages
 
             try
             {               
-                _product = await _productsApiService.GetProduct(productGuid);
+                product = await productsApiService.GetProduct(productGuid);
             }
             catch (HttpRequestException)
             {
@@ -40,7 +40,7 @@ namespace BlazorApp.Components.Pages
 
         private async Task AddToCart()
         {
-            await _cartItemApiService.AddProductToCart(_product);
+            await cartItemApiService.AddProductToCart(product);
         }
     }
 }

@@ -8,25 +8,25 @@ namespace BlazorApp.Components.Pages
 {
 	public partial class Home : ComponentBase
 	{
-		[Inject] private ICartItemApiService _cartItemApiService { get; set; }
-		[Inject] private IProductsApiService _productsApiService { get; set; }
+		[Inject] private ICartItemApiService cartItemApiService { get; set; }
+		[Inject] private IProductsApiService productsApiService { get; set; }
 
-		private ICollection<ProductDto>? _products = null;
+		private ICollection<ProductDto>? products = null;
 		private string loadingText = "Cargando...";
-		private int _page = 0, _totalPages = 0;
+		private int page = 0, totalPages = 0;
 
 		protected override async Task OnInitializedAsync()
 		{
 			await LoadProducts();
 
-			_totalPages = await _productsApiService.GetProductsTotalPages();
+			totalPages = await productsApiService.GetProductsTotalPages();
 		}
 
 		private async Task LoadProducts()
 		{
 			try
 			{
-                _products = await _productsApiService.GetProducts(_page);
+                products = await productsApiService.GetProducts(page);
             } catch (HttpRequestException)
 			{
 				loadingText = "No se han podido leer los productos.";
@@ -35,18 +35,18 @@ namespace BlazorApp.Components.Pages
 
         private async Task AddProductToCart(ProductDto product)
         {
-            await _cartItemApiService.AddProductToCart(product);
+            await cartItemApiService.AddProductToCart(product);
         }
 
         private async Task NextPage()
 		{
-			_page++;
+			page++;
 
             await LoadProducts();
         }
 		private async Task PreviousPage()
 		{
-			_page--;
+			page--;
 
             await LoadProducts();
         }

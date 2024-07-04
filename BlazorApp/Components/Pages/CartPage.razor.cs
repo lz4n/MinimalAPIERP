@@ -7,9 +7,9 @@ namespace BlazorApp.Components.Pages
 {
     public partial class CartPage
     {
-        [Inject] private ICartItemApiService _cartItemApiService { get; set; }
+        [Inject] private ICartItemApiService cartItemApiService { get; set; }
 
-        private ICollection<CartItemDto>? _items = null;
+        private ICollection<CartItemDto>? items = null;
         private string loadingText = "Cargando...";
 
         protected override async Task OnInitializedAsync()
@@ -21,7 +21,7 @@ namespace BlazorApp.Components.Pages
         {
             try
             {
-                _items = await _cartItemApiService.GetCart();
+                items = await cartItemApiService.GetCart();
             }
             catch (HttpRequestException ex)
             {
@@ -44,13 +44,13 @@ namespace BlazorApp.Components.Pages
 
                 if (cartItem.Count == 0)
                 {
-                    _items.Remove(cartItem);
-                    await _cartItemApiService.DeleteItem(cartItem);
+                    items.Remove(cartItem);
+                    await cartItemApiService.DeleteItem(cartItem);
 
                     return;
                 }
 
-                await _cartItemApiService.UpdateItem(cartItem);
+                await cartItemApiService.UpdateItem(cartItem);
             }
         }
     }

@@ -8,11 +8,11 @@ namespace BlazorApp.ApiServices
     {
         private const string CartId = "CART_ID";
 
-        private HttpClient _httpClient;
+        private HttpClient httpClient;
 
         public CartItemApiService(IConfiguration configuration)
         {
-            _httpClient = new HttpClient
+            httpClient = new HttpClient
             {
                 BaseAddress = new Uri(configuration.GetConnectionString("ApiURI") + "erp/cartitem/")
             };
@@ -20,24 +20,24 @@ namespace BlazorApp.ApiServices
 
         public async Task<ICollection<CartItemDto>> GetCart(string cartId = CartId)
         {
-            return await _httpClient.GetFromJsonAsync<ICollection<CartItemDto>>($"getAllCart?cartId={cartId}");
+            return await httpClient.GetFromJsonAsync<ICollection<CartItemDto>>($"getAllCart?cartId={cartId}");
         }
 
         public async Task AddProductToCart(ProductDto product, string cartId = CartId)
         {
-            await _httpClient.PutAsync($"addProductToCart?cartId={cartId}&productGuid={product.Guid}", null);
+            await httpClient.PutAsync($"addProductToCart?cartId={cartId}&productGuid={product.Guid}", null);
 
         }
 
         public async Task DeleteItem(CartItemDto cartItem)
         {
-            await _httpClient.DeleteAsync($"{cartItem.Guid}");
+            await httpClient.DeleteAsync($"{cartItem.Guid}");
 
         }
 
         public async Task UpdateItem(CartItemDto cartItem)
         {
-            await _httpClient.PutAsJsonAsync($"{cartItem.Guid}", new
+            await httpClient.PutAsJsonAsync($"{cartItem.Guid}", new
             {
                 cartId = cartItem.CartId,
                 count = cartItem.Count,

@@ -2,26 +2,26 @@
 
 @rendermode InteractiveServer
 
-@if (_product == null)
+@if (product == null)
 {
     <p><em>@loadingText</em></p>
 }
 else
 {
-    <h1>@_product.Title</h1>
-    <h2>@_product.Price€</h2>
+    <h1>@product.Title</h1>
+    <h2>@product.Price€</h2>
 
-    <p>@_product.Description</p>
+    <p>@product.Description</p>
 
     <button @onclick="AddToCart" class="btn btn-primary" style="display: block; margin-top: 10px; margin-bottom: 10px;">Añadir al carrito</button>
 
     <div>
         <h3>Detalles del Producto</h3>
 
-        <img src="@_product.Category?.ImageUrl" alt="Imagen de producto" />
-        <p><strong>Precio de Venta:</strong> $@_product.SalePrice</p>
-        <p><strong>Fecha de Creación:</strong> @_product.Created.ToShortDateString()</p>
-        <p><strong>Inventario:</strong> @_product.Inventory</p>
-        <p><strong>Tiempo de Entrega:</strong> @_product.LeadTime días</p>
+        <img src="@product.Category?.ImageUrl" alt="Imagen de producto" />
+        <p><strong>Precio de Venta:</strong> $@product.SalePrice</p>
+        <p><strong>Fecha de Creación:</strong> @product.Created.ToShortDateString()</p>
+        <p><strong>Inventario:</strong> @product.Inventory</p>
+        <p><strong>Tiempo de Entrega:</strong> @product.LeadTime días</p>
     </div>
 }
