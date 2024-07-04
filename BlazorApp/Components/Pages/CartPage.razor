@@ -1,0 +1,40 @@
+﻿@page "/cart"
+
+@rendermode InteractiveServer
+
+<PageTitle>Carrito</PageTitle>
+
+<h1>Carrito</h1>
+
+@if (_items == null)
+{
+    <p><em>@loadingText</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Precio total</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cartItem in _items)
+            {
+                <tr>
+                    <td><img src="@cartItem.Product.Category.ImageUrl" alt="@cartItem.Product.Title" width="50" height="60" /></td>
+                    <td><a href="/product/@cartItem.Product.Guid.ToString()">@cartItem.Product.Title</a></td>
+                    <td>@cartItem.Product.Description</td>
+                    <td>@cartItem.Product.Price€/unidad</td>
+                    <td>@(cartItem.Product.Price *cartItem.Count)€</td>
+                    <td><input type="number" value="@cartItem.Count" @onchange="(eventArgs) => ChangeItemCount(eventArgs, cartItem)" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

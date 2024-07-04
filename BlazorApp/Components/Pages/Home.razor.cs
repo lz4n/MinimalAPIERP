@@ -2,29 +2,43 @@
 using BlazorApp.Dtos;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
+using System.Data;
 
 namespace BlazorApp.Components.Pages
 {
 	public partial class Home : ComponentBase
 	{
-		[Inject] private IApiService<ProductViewDto> _productsApiService { get; set; }
+		[Inject] private ICartItemApiService _cartItemApiService { get; set; }
+		[Inject] private IProductsApiService _productsApiService { get; set; }
 
-		private ICollection<ProductViewDto>? _products = null;
+		private ICollection<ProductDto>? _products = null;
+		private string loadingText = "Cargando...";
 		private int _page = 0, _totalPages = 0;
 
 		protected override async Task OnInitializedAsync()
 		{
 			await LoadProducts();
 
-			_totalPages = await _productsApiService.GetTotalPages();
+			_totalPages = await _productsApiService.GetProductsTotalPages();
 		}
 
 		private async Task LoadProducts()
 		{
-            _products = await _productsApiService.Get(_page);
+			try
+			{
+                _products = await _productsApiService.GetProducts(_page);
+            } catch (HttpRequestException)
+			{
+				loadingText = "No se han podido leer los productos.";
+			}    
         }
 
-		private async Task NextPage()
+        private async Task AddProductToCart(ProductDto product)
+        {
+            await _cartItemApiService.AddProductToCart(product);
+        }
+
+        private async Task NextPage()
 		{
 			_page++;
 

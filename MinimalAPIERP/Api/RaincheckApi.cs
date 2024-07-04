@@ -41,7 +41,7 @@ internal static class RaincheckApi
 
         group.MapGet("/raincheck/totalPages", async Task<Ok<int>> (AppDbContext db, IMapper mapper, int pageSize = 10) =>
         {
-            int totalPages = (int)Math.Ceiling(await db.Rainchecks.CountAsync() / (float)pageSize) - 1;
+            int totalPages = (int)Math.Ceiling(await db.Rainchecks.CountAsync() / (float)pageSize) -1;
             return TypedResults.Ok(totalPages);
         })
         .WithOpenApi();

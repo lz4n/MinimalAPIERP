@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MinimalAPIERP.Dtos
 {
-    public class OrderDto
+    public record OrderDto
     {
         public DateTime OrderDate { get; set; }
         public string Username { get; set; } = null!;
@@ -19,7 +19,7 @@ namespace MinimalAPIERP.Dtos
         public decimal Total { get; set; }
     }
 
-    public class OrderViewDto
+    public record OrderViewDto
     {
         public Guid? Guid { get; set; }
         public DateTime OrderDate { get; set; }
@@ -35,7 +35,7 @@ namespace MinimalAPIERP.Dtos
         public decimal Total { get; set; }
     }
 
-    public class CategoryDto
+    public record CategoryDto
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
@@ -43,7 +43,7 @@ namespace MinimalAPIERP.Dtos
     }
 
 
-    public class CategoryViewDto
+    public record CategoryViewDto
     {
         public Guid? Guid { get; set; }
         public string Name { get; set; } = null!;
@@ -51,7 +51,7 @@ namespace MinimalAPIERP.Dtos
         public string? ImageUrl { get; set; }
     }
 
-    public class RaincheckDto
+    public record RaincheckDto
     {
         public string? Name { get; set; }
         public int Count { get; set; }
@@ -60,7 +60,7 @@ namespace MinimalAPIERP.Dtos
         public Guid? ProductGuid { get; set; }
     }
 
-    public class RaincheckViewDto
+    public record RaincheckViewDto
     {
         public Guid? Guid { get; set; }
         public string? Name { get; set; }
@@ -70,18 +70,18 @@ namespace MinimalAPIERP.Dtos
         public ProductViewDto? Product { get; set; }
     }
 
-    public class StoreDto
+    public record StoreDto
     {
         public string? Name { get; set; }
     }
 
-    public class StoreViewDto
+    public record StoreViewDto
     {
         public Guid? Guid { get; set; }
         public string? Name { get; set; }
     }
 
-    public class ProductDto
+    public record ProductDto
     {
         public string SkuNumber { get; set; }
         public int RecommendationId { get; set; }
@@ -98,7 +98,7 @@ namespace MinimalAPIERP.Dtos
 
     }
 
-    public class ProductViewDto
+    public record ProductViewDto
     {
         public Guid? Guid { get; set; }
         public string SkuNumber { get; set; }
@@ -115,7 +115,7 @@ namespace MinimalAPIERP.Dtos
         public CategoryViewDto? Category { get; set; }
     }
 
-    public class CartItemDto
+    public record CartItemDto
     {
         public string CartId { get; set; }
         public int Count { get; set; }
@@ -123,7 +123,7 @@ namespace MinimalAPIERP.Dtos
         public Guid ProductGuid { get; set; }
     }
 
-    public class CartItemViewDto
+    public record CartItemViewDto
     {
         public Guid? Guid { get; set; }
         public string CartId { get; set; }
@@ -132,7 +132,7 @@ namespace MinimalAPIERP.Dtos
         public ProductViewDto? Product { get; set; }
     }
 
-    public class OrderDetailDto
+    public record OrderDetailDto
     {
         public int Count { get; set; }
         public decimal UnitPrice { get; set; }
@@ -140,7 +140,7 @@ namespace MinimalAPIERP.Dtos
         public Guid ProductGuid { get; set; }
     }
 
-    public class OrderDetailViewDto
+    public record OrderDetailViewDto
     {
         public Guid? Guid { get; set; }
         public int Count { get; set; }

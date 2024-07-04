@@ -36,7 +36,7 @@ namespace MinimalAPIERP.Infraestructure.Automapper
         private void MapStores()
         {
             CreateMap<StoreDto, Store>()
-                            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
             CreateMap<Store, StoreViewDto>()
                 .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid))
@@ -46,8 +46,8 @@ namespace MinimalAPIERP.Infraestructure.Automapper
         private void MapOrderDetails()
         {
             CreateMap<OrderDetailDto, OrderDetail>()
-                            .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count))
-                            .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice));
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count))
+                .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice));
 
             CreateMap<OrderDetail, OrderDetailViewDto>()
                 .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid))

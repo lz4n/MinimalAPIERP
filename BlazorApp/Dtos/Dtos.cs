@@ -1,6 +1,6 @@
 ﻿namespace BlazorApp.Dtos
 {
-    public class OrderViewDto
+    public record OrderDto
     {
         public Guid? Guid { get; set; }
         public DateTime OrderDate { get; set; }
@@ -16,7 +16,7 @@
         public decimal Total { get; set; }
     }
 
-    public class CategoryViewDto
+    public record CategoryDto
     {
         public Guid? Guid { get; set; }
         public string Name { get; set; } = null!;
@@ -24,23 +24,23 @@
         public string? ImageUrl { get; set; }
     }
 
-    public class RaincheckViewDto
+    public record RaincheckDto
     {
         public Guid? Guid { get; set; }
         public string? Name { get; set; }
         public int Count { get; set; }
         public double SalePrice { get; set; }
-        public StoreViewDto? Store { get; set; }
-        public ProductViewDto? Product { get; set; }
+        public StoreDto? Store { get; set; }
+        public ProductDto? Product { get; set; }
     }
 
-    public class StoreViewDto
+    public record StoreDto
     {
         public Guid? Guid { get; set; }
         public string? Name { get; set; }
     }
 
-    public class ProductViewDto
+    public record ProductDto
     {
         public Guid? Guid { get; set; }
         public string SkuNumber { get; set; }
@@ -54,24 +54,24 @@
         public string ProductDetails { get; set; }
         public int Inventory { get; set; }
         public int LeadTime { get; set; }
-        public CategoryViewDto? Category { get; set; }
+        public CategoryDto? Category { get; set; }
     }
 
-    public class CartItemViewDto
+    public record CartItemDto
     {
         public Guid? Guid { get; set; }
         public string CartId { get; set; }
         public int Count { get; set; }
         public DateTime DateCreated { get; set; }
-        public ProductViewDto? Product { get; set; }
+        public ProductDto? Product { get; set; }
     }
 
-    public class OrderDetailViewDto
+    public record OrderDetailDto
     {
         public Guid? Guid { get; set; }
         public int Count { get; set; }
         public decimal UnitPrice { get; set; }
-        public OrderViewDto? Order { get; set; }
-        public ProductViewDto? Product { get; set; }
+        public OrderDto? Order { get; set; }
+        public ProductDto? Product { get; set; }
     }
 }

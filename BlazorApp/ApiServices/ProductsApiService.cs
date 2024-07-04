@@ -2,26 +2,33 @@
 
 namespace BlazorApp.ApiServices
 {
-    public class ProductsApiService : IApiService<ProductViewDto>
+    public class ProductsApiService : IProductsApiService
     {
+        private const int DefaultPageSize = 6;
+
         private HttpClient _httpClient;
 
         public ProductsApiService(IConfiguration configuration)
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri(configuration.GetConnectionString("ApiURI"))
+                BaseAddress = new Uri(configuration.GetConnectionString("ApiURI") + "erp/product/")
             };
         }
 
-        public async Task<ICollection<ProductViewDto>> Get(int page, int pageSize = 10)
+        public async Task<ProductDto> GetProduct(Guid guid)
         {
-            return await _httpClient.GetFromJsonAsync<ICollection<ProductViewDto>>($"erp/product/paged?pageSize={pageSize}&page={page}");
+            return await _httpClient.GetFromJsonAsync<ProductDto>($"{guid}");
         }
 
-        public async Task<int> GetTotalPages(int pageSize = 10)
+        public async Task<ICollection<ProductDto>> GetProducts(int page, int pageSize = DefaultPageSize)
         {
-            return await _httpClient.GetFromJsonAsync<int>($"erp/product/totalPages?pageSize={pageSize}");
+            return await _httpClient.GetFromJsonAsync<ICollection<ProductDto>>($"paged?pageSize={pageSize}&page={page}");
+        }
+
+        public async Task<int> GetProductsTotalPages(int pageSize = DefaultPageSize)
+        {
+            return await _httpClient.GetFromJsonAsync<int>($"totalPages?pageSize={pageSize}");
         }
     }
 }

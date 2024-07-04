@@ -23,7 +23,8 @@ namespace BlazorApp
             .Build();
 
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-            builder.Services.AddScoped<IApiService<ProductViewDto>, ProductsApiService>();
+            builder.Services.AddScoped<IProductsApiService, ProductsApiService >();
+            builder.Services.AddScoped<ICartItemApiService, CartItemApiService>();
 
             var app = builder.Build();
 

@@ -2,6 +2,7 @@
 using ERP.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using MinimalAPIERP.Dtos;
@@ -108,6 +109,58 @@ internal static class CartItemApi
             db.CartItems.Remove(cartitem);
             await db.SaveChangesAsync();
             return TypedResults.NoContent();
+        })
+        .WithOpenApi();
+
+
+        group.MapGet("/cartitem/getAllCart", async Task<Results<Ok<IList<CartItemViewDto>>, NotFound>> (AppDbContext db, IMapper mapper, string cartId) =>
+        {
+            ICollection<CartItem> cartitems = await db.CartItems
+                .Include(x => x.Product)
+                .ThenInclude(X => X.Category)
+                .Where(x => x.CartId == cartId)
+                .ToListAsync();
+
+            return cartitems.Any() ? TypedResults.Ok(mapper.Map<IList<CartItemViewDto>>(cartitems)) : TypedResults.NotFound();
+        })
+        .WithOpenApi();
+
+        group.MapPut("/cartitem/addProductToCart", async Task<Results<Created<CartItemViewDto>, Ok<CartItemViewDto>, NotFound>> (AppDbContext db, IMapper mapper, string cartId, Guid productGuid) =>
+        {
+            CartItem cartitem = await db.CartItems
+                .Include(x => x.Product)
+                .ThenInclude(X => X.Category)
+                .Where(x => x.CartId == cartId)
+                .Where(x => x.Product.Guid == productGuid)
+                .FirstOrDefaultAsync();
+
+            if (cartitem is not null)
+            {
+                cartitem.Count++;
+
+                await db.SaveChangesAsync();
+
+                return TypedResults.Ok(mapper.Map<CartItemViewDto>(cartitem));
+            }
+
+
+            Product? product = await db.Products.FirstOrDefaultAsync(x => x.Guid == productGuid);
+            if (product is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            CartItem newCartitem = new CartItem()
+            {
+                Count = 1,
+                Product = product,
+                CartId = cartId,
+                DateCreated = DateTime.Now,
+            };
+
+            db.CartItems.Add(newCartitem);
+            await db.SaveChangesAsync();
+            return TypedResults.Created($"/erp/cartitem/{newCartitem.Guid}", mapper.Map<CartItemViewDto>(newCartitem));
         })
         .WithOpenApi();
 
